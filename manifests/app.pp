@@ -10,6 +10,7 @@ define laravel::app (
   $server_name      = $name,
   $server_port      = 80,
   $app_dir          = "/var/www/${name}",
+  $public_dirname   = 'public',
   $owner            = $name,
   $group            = $name,
   $webuser          = 'www-data',
@@ -27,7 +28,6 @@ define laravel::app (
   $locale           = 'en',
   $fallback_locale  = 'en'
 ) {
-
   # validate parameters here
   if !(is_domain_name($server_name)) {
     fail("server_name must be a valid domain name, '${server_name}' is not valid")
@@ -51,7 +51,7 @@ define laravel::app (
   $url = "http://${server_name}:${server_port}"
 
   # virtualhost document root, public files
-  $root_dir    = "${app_dir}/${laravel::params::public_dirname}"
+  $root_dir    = "${app_dir}/${public_dirname}"
   # app generated files
   $var_dir     = "${app_dir}/app/storage"
 
@@ -78,7 +78,7 @@ define laravel::app (
       mode   => '2775',
     }
   }
-  
+
   file { $root_dir:
     ensure  => directory,
     owner   => $owner,
