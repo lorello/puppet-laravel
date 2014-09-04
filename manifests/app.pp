@@ -79,12 +79,14 @@ define laravel::app (
     }
   }
 
-  file { $root_dir:
-    ensure  => directory,
-    owner   => $owner,
-    group   => $group,
-    mode    => '2775',
-    require => Vcsrepo[$app_dir],
+  if ! defined(File[$root_dir]) {
+    file { $root_dir:
+      ensure  => directory,
+      owner   => $owner,
+      group   => $group,
+      mode    => '2775',
+      require => Vcsrepo[$app_dir],
+    }
   }
 
   file { [ $webserver_writable_dirs, $ephimeral_dirs ]:
