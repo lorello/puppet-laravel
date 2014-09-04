@@ -127,6 +127,7 @@ define laravel::app (
     content => template('app.php.erb'),
     require => Vcsrepo[$app_dir],
   }
+
   file { "${app_dir}/app/config/database.php":
     ensure  => file,
     owner   => $owner,
@@ -153,6 +154,13 @@ define laravel::app (
     require => Vcsrepo[$app_dir],
   }
 
+  file { "${app_dir}/composer.lock":
+    owner   => $owner,
+    group   => $group,
+    mode    => '0664',
+    require => Exec["${name}-composer-install"],
+  }
+
   # Each module installed with composer could have migrations
   # Each module migration have to be run before app migrations
   # using the command
@@ -170,27 +178,12 @@ define laravel::app (
     subscribe   => Exec[ "${name}-composer-install" ],
   }
 
-  file { "${app_dir}/composer.lock":
-    owner   => $owner,
-    group   => $group,
-    mode    => '0664',
-    require => Exec["${name}-composer-install"],
-  }
-
-  # run composer and db migrations only if something change on versioned files
-  exec { "${name}-composer-update":
-    command     => 'composer update',
-    refreshonly => true,
-    onlyif      => "test -f ${app_dir}/composer.lock",
-    subscribe   => Vcsrepo[$app_dir],
-  }
-
   exec { "${name}-migrate":
     command     => "${app_dir}/artisan migrate",
     refreshonly => true,
     subscribe   => [
       Exec["${name}-composer-update"],
-      Exec["${name}-composer-install"]
+      Exec["${name}-modules-migrations"]
     ],
   }
 
@@ -201,7 +194,15 @@ define laravel::app (
     subscribe   => Exec["${name}-composer-install"],
   }
 
-  # Run artisan only if composer updates something
+  # run composer and db migrations only if something change on versioned files
+  exec { "${name}-composer-update":
+    command     => 'composer update',
+    refreshonly => true,
+    onlyif      => "test -f ${app_dir}/composer.lock",
+    subscribe   => Vcsrepo[$app_dir],
+  }
+
+    # Run artisan only if composer updates something
   exec {
     [
       "${app_dir}/artisan cache:clear",
