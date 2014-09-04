@@ -51,7 +51,7 @@ define laravel::app (
   $url = "http://${server_name}:${server_port}"
 
   # virtualhost document root, public files
-  $root_dir    = "${app_dir}/public"
+  $root_dir    = "${app_dir}/${laravel::params::public_dirname}"
   # app generated files
   $var_dir     = "${app_dir}/app/storage"
 
