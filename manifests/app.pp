@@ -44,7 +44,7 @@ define laravel::app (
 
   validate_bool(str2bool($clean_ephimerals))
   validate_bool(str2bool($app_debug))
-  validate_re($timezone, '[A-Z][a-z]+/[a-zA-z0-9\-+]+')
+  validate_re($timezone, '[A-Z][a-z]+(/[a-zA-z0-9\-+]+)?')
   validate_re($locale, '[a-z]{2}(_[A-Z]{2})?')
   validate_re($fallback_locale, '[a-z]{2}(_[A-Z]{2})?')
 
