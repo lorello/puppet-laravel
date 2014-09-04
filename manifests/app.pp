@@ -70,13 +70,15 @@ define laravel::app (
     "${var_dir}/meta",
   ]
 
-  file { $app_dir:
-    ensure => directory,
-    owner  => $owner,
-    group  => $group,
-    mode   => '2775',
+  if ! defined(File[$app_dir]) {
+    file { $app_dir:
+      ensure => directory,
+      owner  => $owner,
+      group  => $group,
+      mode   => '2775',
+    }
   }
-
+  
   file { $root_dir:
     ensure  => directory,
     owner   => $owner,
