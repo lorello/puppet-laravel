@@ -153,13 +153,19 @@ define laravel::app (
     require => Vcsrepo[$app_dir],
   }
 
-  # TODO: make a find in /vendor for directories $mod/src/migrations
-  # and run migrate for all modules that need it
-  exec {
-    [
-      "${app_dir}/artisan migrate --package=cartalyst/sentry",
-      "${app_dir}/artisan migrate --package=liebig/cron",
-    ]:
+  # Each module installed with composer could have migrations
+  # Each module migration have to be run before app migrations
+  # using the command
+  #     artisan migrate --package=AUTHOR/MODULE
+  # Migrations directory are at fourth depth level from app_dir
+  #     app_dir/vendor/AUTHOR/MODULE/src/migrations
+  $find = "find vendor -mindepth 4 -maxdepth 4 -type d -name migrations -exec ls -ld {} \\;"
+  # With awk we got the list of modules to apply artisan command in the format
+  #     AUTHOR/MODULE
+  $awk = "awk -F'/' '{ print $2 \"/\" $3 }'"
+  # The xargs command, run the artisan command onetime foreach module
+  exec { "${name}-modules-migrations":
+    command => "${find}|${awk}|xargs -0 ./artisan migrate --package=",
     refreshonly => true,
     subscribe   => Exec[ "${name}-composer-install" ],
   }
