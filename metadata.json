@@ -1,0 +1,25 @@
+{
+  "name": "puppet-laravel",
+  "version": "0.1.0",
+  "source": "https://github.com/lorello/laravel-puppet.git",
+  "author": "LoreLLo",
+  "license": "Apache 2.0",
+  "summary": "Install and manage a webapp developed with Laravel Framework",
+  "description": "Install and manage a webapp developed with Laravel Framework",
+  "project_page": "https://github.com/lorello/laravel-puppet",
+  "dependencies": [
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 2.4.0" },
+    { "name": "puppetlabs/vcsrepo", "version_requirement":"> 0.0.0"}
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": "2.7"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+  }
+}
