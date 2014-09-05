@@ -1,3 +1,5 @@
-YYYY-MM-DD Release 0.1.0
-- something you did
-- something else you did
+2014-09-03 Release 0.1.0
+- first running version
+
+2014-09-05 Release 0.1.1
+- fixed order execution of artisan tasks
