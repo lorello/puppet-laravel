@@ -1,8 +1,8 @@
 {
   "name": "puppet-laravel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "source": "https://github.com/lorello/laravel-puppet.git",
-  "author": "LoreLLo",
+  "author": "Softec SpA",
   "license": "Apache 2.0",
   "summary": "Install and manage a webapp developed with Laravel Framework",
   "description": "Install and manage a webapp developed with Laravel Framework",
