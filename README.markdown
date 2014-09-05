@@ -13,48 +13,71 @@
 
 ##Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves. This is your 30 second elevator pitch for your module. Consider including OS/Puppet version it works with.       
+The module install and manage any app developed with the PHP Framework Laravel.
+It does not setup the Lamp stack for you, it simply get the code, set
+directory permissions, run composer, migrate, etc... to get the app running
+and if needed and wanted get it updated.
+
+It's known to work on Puppet >= 2.7 and <= 3.6.
 
 ##Module Description
 
-If applicable, this section should have a brief description of the technology the module integrates with and what that integration enables. This section should answer the questions: "What does this module *do*?" and "Why would I use it?"
+The module has been developed with profiles&roles approach in mind:
+the module take care of configuring the app and aims to be independent from the
+technology stack you choose: you could have a classic LAMP profile or use Nginx
+and MariaDB without the need to modify this application module.
 
-If your module has a range of functionality (installation, configuration, management, etc.) this is the time to mention it.
+The module checkout the code using VCSRepo PuppetLabs module, then it ensure
+that all directories needed for Laravel have the right permissions.
+
+The first time the App is installed, the module run a sequence of command
+to bootstrap code&database:
+
+    $ composer install
+    # foreach module that has a `migrations` directory:
+    $ php migrate --package=AUTHOR/MODULE
+    $ php migrate
+    $ php seed
+
+On each code update, the command executed are instead
+
+    $ composer update
+    # foreach module that has a `migrations` directory:
+    $ php migrate --package=AUTHOR/MODULE
+    $ php migrate
 
 ##Setup
 
 ###What laravel affects
 
-* A list of files, packages, services, or operations that the module will alter, impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form. 
+The define `app` take a path as parameter: all changes made from the module
+are inside this path.  
 
 ###Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here. 
+A complete setup requires you to install a webserver and a database server.
 
 ###Beginning with laravel
 
-The very basic steps needed for a user to get the module up and running. 
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+Create a define for your app with the only two needed parameters:
+```ruby
+laravel::app { 'laravel.example.com':
+  app_key     => '12345678901234567890123456789012',
+  source      => 'https://github.com/davzie/laravel-bootstrap',
+}
+```
 
 ##Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here. 
+Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here.
 
 ##Reference
 
-Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
+  * `class laravel`: empty class, not used.
+  * `define laravel::app` the define that do the work
 
 ##Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
-
-##Development
-
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
-
-##Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+The module is tested under Ubuntu 12.04, but it use very basic resources from OS
+so it probably runs under other OS without any change, feel free to do a PR
+if something is needed to support your preferred OS.
