@@ -2,7 +2,6 @@
 #
 # This define install and configure an app instance
 #
-#
 define laravel::app (
   $app_key,
   $source,
@@ -124,7 +123,7 @@ define laravel::app (
     owner   => $owner,
     group   => $webuser,
     mode    => '0644',
-    content => template('app.php.erb'),
+    content => template('laravel/app.php.erb'),
     require => Vcsrepo[$app_dir],
   }
 
@@ -133,7 +132,7 @@ define laravel::app (
     owner   => $owner,
     group   => $webuser,
     mode    => '0644',
-    content => template('database.php.erb'),
+    content => template('laravel/database.php.erb'),
     require => Vcsrepo[$app_dir],
   }
 
@@ -175,12 +174,16 @@ define laravel::app (
   exec { "${name}-modules-migrations":
     command => "${find}|${awk}|xargs -0 ./artisan migrate --package=",
     refreshonly => true,
-    subscribe   => Exec[ "${name}-composer-install" ],
+    subscribe   => [
+      Exec["${name}-composer-update"],
+      Exec["${name}-modules-migrations"]
+    ],
   }
 
   exec { "${name}-migrate":
     command     => "${app_dir}/artisan migrate",
     refreshonly => true,
+    require     => Exec["${name}-modules-migrations"],
     subscribe   => [
       Exec["${name}-composer-update"],
       Exec["${name}-modules-migrations"]
