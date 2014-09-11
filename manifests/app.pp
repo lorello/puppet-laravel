@@ -176,7 +176,6 @@ define laravel::app (
     refreshonly => true,
     subscribe   => [
       Exec["${name}-composer-update"],
-      Exec["${name}-modules-migrations"]
     ],
   }
 

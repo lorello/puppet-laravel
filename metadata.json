@@ -1,6 +1,6 @@
 {
   "name": "puppet-laravel",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "source": "https://github.com/lorello/laravel-puppet.git",
   "author": "Softec SpA",
   "license": "Apache 2.0",
