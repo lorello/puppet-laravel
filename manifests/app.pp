@@ -147,10 +147,11 @@ define laravel::app (
   ## Laravel one-time setup
   # Run composer install only if .lock file does not exists
   exec { "${name}-composer-install":
-    command => 'composer install',
-    creates => "${app_dir}/composer.lock",
-    tries   => 2,
-    require => Vcsrepo[$app_dir],
+    command     => 'composer install',
+    environment => ["COMPOSER_HOME=${app_dir}"],
+    creates     => "${app_dir}/composer.lock",
+    tries       => 2,
+    require     => Vcsrepo[$app_dir],
   }
 
   file { "${app_dir}/composer.lock":
