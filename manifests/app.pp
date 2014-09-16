@@ -173,7 +173,7 @@ define laravel::app (
   $awk = "awk -F'/' '{ print $2 \"/\" $3 }'"
   # The xargs command, run the artisan command onetime foreach module
   exec { "${name}-modules-migrations":
-    command => "${find}|${awk}|xargs -0 ./artisan migrate --package=",
+    command => "${find}|${awk}|xargs -0 ./artisan migrate -n --package=",
     refreshonly => true,
     subscribe   => [
       Exec["${name}-composer-update"],
