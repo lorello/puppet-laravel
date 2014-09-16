@@ -173,7 +173,7 @@ define laravel::app (
   $awk = "awk -F'/' '{ print $2 \"/\" $3 }'"
   # The xargs command, run the artisan command onetime foreach module
   exec { "${name}-modules-migrations":
-    command => "${find}|${awk}|xargs -0 ./artisan migrate -n --package=",
+    command => "${find}|${awk}|xargs -0 ./artisan migrate --no-interaction --package=",
     refreshonly => true,
     subscribe   => [
       Exec["${name}-composer-update"],
@@ -191,7 +191,7 @@ define laravel::app (
   }
 
   exec { "${name}-seed":
-    command     => "${app_dir}/artisan db:seed",
+    command     => "${app_dir}/artisan db:seed --no-interaction",
     refreshonly => true,
     require     => Exec["${name}-migrate"],
     subscribe   => Exec["${name}-composer-install"],
@@ -208,9 +208,9 @@ define laravel::app (
     # Run artisan only if composer updates something
   exec {
     [
-      "${app_dir}/artisan cache:clear",
-      "${app_dir}/artisan clear-compiled",
-      "${app_dir}/artisan optimize",
+      "${app_dir}/artisan cache:clear --no-interaction",
+      "${app_dir}/artisan clear-compiled --no-interaction",
+      "${app_dir}/artisan optimize --no-interaction",
     ]:
     refreshonly => true,
     subscribe   => Exec[ "${name}-composer-update" ],
